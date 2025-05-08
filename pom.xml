@@ -11,8 +11,8 @@
     <groupId>com.example</groupId>
     <artifactId>BackendConstructionApplication</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>backendContstructionApp</name>
-    <description>backendContstructionApp</description>
+    <name>BackendConstructionApplication</name>
+    <description>Backend for construction management web and mobile apps</description>
     <url/>
     <licenses>
         <license/>
@@ -30,6 +30,7 @@
         <java.version>21</java.version>
     </properties>
     <dependencies>
+        <!-- Spring core -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
@@ -38,6 +39,20 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
+        </dependency>
+
+        <!-- OpenAPI -->
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+            <version>2.8.8</version>
+        </dependency>
+
+        <!-- Annotations -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 
