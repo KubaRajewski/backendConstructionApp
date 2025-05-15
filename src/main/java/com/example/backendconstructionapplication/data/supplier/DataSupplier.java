@@ -1,6 +1,7 @@
 package com.example.backendconstructionapplication.data.supplier;
 
 import com.example.backendconstructionapplication.dto.ProjectDTO;
+import com.example.backendconstructionapplication.dto.TeamDTO;
 
 import java.util.Arrays;
 import java.util.List;
@@ -10,6 +11,9 @@ public class DataSupplier {
 
     private static final List<ProjectDTO> projects = getProjects();
 
+    private static final List<TeamDTO> teams = getTeams();
+
+    ///=============== Project ================///
     public static List<ProjectDTO> getProjects() {
         ProjectDTO project1 = ProjectDTO.builder()
                 .id(1L)
@@ -57,4 +61,49 @@ public class DataSupplier {
         Optional<ProjectDTO> project = projects.stream().filter(p -> p.getId().equals(id)).findFirst();
         return project.orElse(null);
     }
+
+    ///=============== Team ================///
+
+    public static List<TeamDTO> getTeams(){
+        TeamDTO team1 = TeamDTO.builder()
+                .id(1L)
+                .name("Ekipa walaszka")
+                .construction("Budowa Osiedla Mieszkalnego")
+                .workers(Arrays.asList("Wiesiek", "Zbuszek"))
+                .users(Arrays.asList("Kierownik", "Prezes", "Inwestor"))
+        .build();
+
+        TeamDTO team2 = TeamDTO.builder()
+                .id(1L)
+                .name("Ekipa Majstrow")
+                .construction("Budowa Osiedla Mieszkalnego")
+                .workers(Arrays.asList("Krzysiek", "Pawel"))
+                .users(Arrays.asList("Kierownik", "Prezes", "Inwestor"))
+                .build();
+
+        TeamDTO team3 = TeamDTO.builder()
+                .id(1L)
+                .name("Ekipa stefana")
+                .construction("Budowa Osiedla Mieszkalnego")
+                .workers(Arrays.asList("Stefan", "Szwagier stefana"))
+                .users(Arrays.asList("Kierownik", "Prezes", "Inwestor"))
+                .build();
+
+        return List.of(team1, team2, team3);
+    }
+
+    public static TeamDTO getTeamById(Long id) {
+        Optional<TeamDTO> team = teams.stream().filter(p -> p.getId().equals(id)).findFirst();
+        return team.orElse(null);
+    }
+
+    ///=============== Users ================///
+
+
+
+    ///=============== Workers ================///
+
+    ///=============== Construction ================///
+
+
 }
