@@ -2,13 +2,14 @@ package com.example.backendconstructionapplication.dto;
 
 import lombok.Builder;
 import lombok.Data;
+import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDate;
 import java.util.List;
 
 @Data
-@Builder
-public abstract class DocumentDTO {
+@SuperBuilder
+public class DocumentDTO {
 
     private Long id;
 

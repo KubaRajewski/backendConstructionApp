@@ -1,16 +1,17 @@
 package com.example.backendconstructionapplication.dto;
 
-import lombok.Builder;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.List;
 
 
 // This class mays extends or not necessary
 @EqualsAndHashCode(callSuper = true)
 @Data
-@Builder
+@SuperBuilder
 public class ContractDTO extends DocumentDTO{
 
     private BigDecimal value;

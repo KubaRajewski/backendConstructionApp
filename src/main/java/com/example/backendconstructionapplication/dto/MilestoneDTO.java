@@ -14,10 +14,13 @@ public class MilestoneDTO {
 
     private String name;
 
+    private LocalDate estimatedDateOfRealization;
+
+    // to be switched to Enum type
+    private String status;
+
     // to be switched to Executor object
     private String executor;
-
-    private LocalDate estimatedDateOfRealization;
 
     // to be switched to Document object
     private List<String> documents;

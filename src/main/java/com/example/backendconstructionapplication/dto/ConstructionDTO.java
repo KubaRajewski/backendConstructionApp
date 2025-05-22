@@ -30,4 +30,7 @@ public class ConstructionDTO {
 
     // to be switched to Milestone object
     private List<String> milestones;
+
+    // to be switched to Project object
+    private String project;
 }
