@@ -30,8 +30,8 @@ public class TeamController {
     @ApiResponse(responseCode = "500", description = "Internal server error, please try again later",
             content = @Content(mediaType = "application/json"))
     @GetMapping("/teams")
-    public ResponseEntity<List<ProjectDTO>> getAllTeams() {
-        return new ResponseEntity<>(DataSupplier.getProjects(), HttpStatus.OK);
+    public ResponseEntity<List<TeamDTO>> getAllTeams() {
+        return new ResponseEntity<>(DataSupplier.getExtensionTeam(), HttpStatus.OK);
     }
 
     @Operation(summary = "Get team by ID", description = "Retrieve a construction team by its ID")
@@ -84,8 +84,24 @@ public class TeamController {
             content = @Content(mediaType = "application/json"))
     @PutMapping("/teams/{id}")
     public ResponseEntity<TeamDTO> updateTeam(@PathVariable Long id, @RequestBody TeamDTO dto) {
-        TeamDTO updated = DataSupplier.updateTeamById(id, dto);
-        return new ResponseEntity<>(updated, HttpStatus.OK);
+        DataSupplier.updateTeamById(id, dto);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
+
+    @Operation(summary = "Add new team", description = "Add a new construction team to the system")
+    @ApiResponse(responseCode = "201", description = "Team successfully added",
+            content = @Content(mediaType = "application/json"))
+    @ApiResponse(responseCode = "400", description = "Bad request, invalid input",
+            content = @Content(mediaType = "application/json"))
+    @ApiResponse(responseCode = "403", description = "Forbidden, access denied",
+            content = @Content(mediaType = "application/json"))
+    @ApiResponse(responseCode = "500", description = "Internal server error, please try again later",
+            content = @Content(mediaType = "application/json"))
+    @PostMapping("/teams")
+    public ResponseEntity<TeamDTO> addTeam(@RequestBody TeamDTO team) {
+        DataSupplier.addTeam(team);
+        return new ResponseEntity<>(team, HttpStatus.CREATED);
+    }
+
 
 }

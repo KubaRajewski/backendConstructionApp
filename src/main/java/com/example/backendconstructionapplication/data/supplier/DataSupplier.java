@@ -1,6 +1,7 @@
 package com.example.backendconstructionapplication.data.supplier;
 
 import com.example.backendconstructionapplication.dto.*;
+import com.example.backendconstructionapplication.exception.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -19,7 +20,7 @@ public class DataSupplier {
 
     private static final List<WorkerDTO> workers = getWorkers();
 
-    private static final List<ConstructionDTO> constructions = getConstruction();
+    private static final List<ConstructionDTO> constructions = List.copyOf(getConstruction());
 
     private static final List<ContractorDTO> contractors = getContractors();
 
@@ -77,14 +78,15 @@ public class DataSupplier {
     }
 
     public static ProjectDTO getProjectById(Long id) {
-        Optional<ProjectDTO> project = projects.stream().filter(p -> p.getId().equals(id)).findFirst();
+        Optional<ProjectDTO> project = getExtensionProject().stream().filter(p -> p.getId().equals(id)).findFirst();
         return project.orElse(null);
     }
 
-    public static ProjectDTO updateProjectById(Long id, ProjectDTO updateCommand) {
+    public static void updateProjectById(Long id, ProjectDTO updateCommand) {
         ProjectDTO projectToUpdate = getProjectById(id);
-        if (projectToUpdate == null) return null;
-
+        if (projectToUpdate == null) {
+            throw new ProjectNotFoundException();
+        }
         Optional.ofNullable(updateCommand.getName()).ifPresent(projectToUpdate::setName);
         Optional.ofNullable(updateCommand.getLocation()).ifPresent(projectToUpdate::setLocation);
         Optional.of(updateCommand.getPlannedPrizeOfRealization()).ifPresent(projectToUpdate::setPlannedPrizeOfRealization);
@@ -94,13 +96,24 @@ public class DataSupplier {
         Optional.ofNullable(updateCommand.getContractors()).ifPresent(projectToUpdate::setContractors);
         Optional.ofNullable(updateCommand.getProjectManager()).ifPresent(projectToUpdate::setProjectManager);
         Optional.ofNullable(updateCommand.getMilestones()).ifPresent(projectToUpdate::setMilestones);
-
-        return projectToUpdate;
     }
 
     public static void deleteProjectById(Long id) {
         ProjectDTO project = getProjectById(id);
-        projects.remove(project);
+        if (project == null){
+            throw new ProjectNotFoundException();
+        }
+        getExtensionProject().remove(project);
+    }
+
+    public static void addProject(ProjectDTO project) {
+        Long newId = getExtensionProject().stream().mapToLong(ProjectDTO::getId).max().orElse(0L) + 1;
+        project.setId(newId);
+        getExtensionProject().add(project);
+    }
+
+    public static List<ProjectDTO> getExtensionProject() {
+        return projects;
     }
 
     /// =============== Team ================///
@@ -134,25 +147,37 @@ public class DataSupplier {
     }
 
     public static TeamDTO getTeamById(Long id) {
-        Optional<TeamDTO> team = teams.stream().filter(t -> t.getId().equals(id)).findFirst();
+        Optional<TeamDTO> team = getExtensionTeam().stream().filter(t -> t.getId().equals(id)).findFirst();
         return team.orElse(null);
     }
 
-    public static TeamDTO updateTeamById(Long id, TeamDTO updateCommand) {
+    public static void updateTeamById(Long id, TeamDTO updateCommand) {
         TeamDTO teamToUpdate = getTeamById(id);
-        if (teamToUpdate == null) return null;
-
+        if (teamToUpdate == null) {
+            throw new TeamNotFoundException();
+        }
         Optional.ofNullable(updateCommand.getName()).ifPresent(teamToUpdate::setName);
         Optional.ofNullable(updateCommand.getConstruction()).ifPresent(teamToUpdate::setConstruction);
         Optional.ofNullable(updateCommand.getWorkers()).ifPresent(teamToUpdate::setWorkers);
         Optional.ofNullable(updateCommand.getUsers()).ifPresent(teamToUpdate::setUsers);
-
-        return teamToUpdate;
     }
 
     public static void deleteTeamById(Long id) {
         TeamDTO team = getTeamById(id);
-        teams.remove(team);
+        if (team == null){
+            throw new TeamNotFoundException();
+        }
+        getExtensionTeam().remove(team);
+    }
+
+    public static void addTeam(TeamDTO team) {
+        Long newId = getExtensionTeam().stream().mapToLong(TeamDTO::getId).max().orElse(0L) + 1;
+        team.setId(newId);
+        getExtensionTeam().add(team);
+    }
+
+    public static List<TeamDTO> getExtensionTeam() {
+        return teams;
     }
 
     /// =============== Users ================///
@@ -189,26 +214,39 @@ public class DataSupplier {
     }
 
     public static UserDTO getUserById(Long id) {
-        Optional<UserDTO> user = users.stream().filter(t -> t.getId().equals(id)).findFirst();
+        Optional<UserDTO> user = getExtensionUser().stream().filter(t -> t.getId().equals(id)).findFirst();
         return user.orElse(null);
     }
 
-    public static UserDTO updateUserById(Long id, UserDTO updateCommand) {
+    public static void updateUserById(Long id, UserDTO updateCommand) {
         UserDTO userToUpdate = getUserById(id);
-        if (userToUpdate == null) return null;
-
+        if (userToUpdate == null) {
+            throw new UserNotFoundException();
+        }
         Optional.ofNullable(updateCommand.getEmail()).ifPresent(userToUpdate::setEmail);
         Optional.ofNullable(updateCommand.getFirstName()).ifPresent(userToUpdate::setFirstName);
         Optional.ofNullable(updateCommand.getLastName()).ifPresent(userToUpdate::setLastName);
         Optional.ofNullable(updateCommand.getRoleInTheCompany()).ifPresent(userToUpdate::setRoleInTheCompany);
         Optional.ofNullable(updateCommand.getTeam()).ifPresent(userToUpdate::setTeam);
-
-        return userToUpdate;
     }
 
     public static void deleteUserById(Long id) {
         UserDTO user = getUserById(id);
-        users.remove(user);
+        if (user == null){
+            throw new UserNotFoundException();
+        }
+        getExtensionUser().remove(user);
+    }
+
+    // method to returning real extension
+    public static List<UserDTO> getExtensionUser() {
+        return users;
+    }
+
+    public static void addUser(UserDTO user) {
+        Long newId = getExtensionUser().stream().mapToLong(UserDTO::getId).max().orElse(0L) + 1;
+        user.setId(newId);
+        getExtensionUser().add(user);
     }
 
     /// =============== Workers ================///
@@ -248,27 +286,40 @@ public class DataSupplier {
     }
 
     public static WorkerDTO getWorkerById(Long id) {
-        Optional<WorkerDTO> worker = workers.stream().filter(t -> t.getId().equals(id)).findFirst();
+        Optional<WorkerDTO> worker = getExtensionWorker().stream().filter(t -> t.getId().equals(id)).findFirst();
         return worker.orElse(null);
     }
 
-    public static WorkerDTO updateWorkerById(Long id, WorkerDTO updateCommand) {
+    public static void updateWorkerById(Long id, WorkerDTO updateCommand) {
         WorkerDTO workerToUpdate = getWorkerById(id);
-        if (workerToUpdate == null) return null;
-
+        if (workerToUpdate == null) {
+            throw new WorkerNotFoundException();
+        }
         Optional.ofNullable(updateCommand.getFirstName()).ifPresent(workerToUpdate::setFirstName);
         Optional.ofNullable(updateCommand.getLastName()).ifPresent(workerToUpdate::setLastName);
         Optional.ofNullable(updateCommand.getSpecialization()).ifPresent(workerToUpdate::setSpecialization);
         Optional.ofNullable(updateCommand.getConstruction()).ifPresent(workerToUpdate::setConstruction);
         Optional.ofNullable(updateCommand.getMilestone()).ifPresent(workerToUpdate::setMilestone);
         Optional.ofNullable(updateCommand.getTeam()).ifPresent(workerToUpdate::setTeam);
-
-        return workerToUpdate;
     }
 
     public static void deleteWorkerById(Long id) {
         WorkerDTO worker = getWorkerById(id);
-        workers.remove(worker);
+        if (worker == null){
+            throw new WorkerNotFoundException();
+        }
+        getExtensionWorker().remove(worker);
+    }
+
+    public static void addWorker(WorkerDTO worker) {
+        Long newId = getExtensionWorker().stream().mapToLong(WorkerDTO::getId).max().orElse(0L) + 1;
+        worker.setId(newId);
+        getExtensionWorker().add(worker);
+    }
+
+    // method to returning real extension
+    public static List<WorkerDTO> getExtensionWorker() {
+        return workers;
     }
 
     /// =============== Construction ================///
@@ -304,14 +355,15 @@ public class DataSupplier {
     }
 
     public static ConstructionDTO getConstructionById(Long id) {
-        Optional<ConstructionDTO> construction = constructions.stream().filter(t -> t.getId().equals(id)).findFirst();
+        Optional<ConstructionDTO> construction = getExtensionConstruction().stream().filter(t -> t.getId().equals(id)).findFirst();
         return construction.orElse(null);
     }
 
-    public static ConstructionDTO updateConstructionById(Long id, ConstructionDTO updateCommand) {
+    public static void updateConstructionById(Long id, ConstructionDTO updateCommand) {
         ConstructionDTO construction = getConstructionById(id);
-        if (construction == null) return null;
-
+        if (construction == null) {
+            throw new ConstructionNotFoundException();
+        }
         Optional.ofNullable(updateCommand.getName())
                 .ifPresent(construction::setName);
         Optional.ofNullable(updateCommand.getLocation())
@@ -330,13 +382,25 @@ public class DataSupplier {
                 .ifPresent(construction::setTeams);
         Optional.ofNullable(updateCommand.getMilestones())
                 .ifPresent(construction::setMilestones);
-
-        return construction;
     }
 
     public static void deleteConstructionById(Long id) {
         ConstructionDTO construction = getConstructionById(id);
-        constructions.remove(construction);
+        if (construction == null) {
+            throw new ConstructionNotFoundException();
+        }
+        getExtensionConstruction().remove(construction);
+    }
+
+    public static void addConstruction(ConstructionDTO construction) {
+        Long newId = getExtensionConstruction().stream().mapToLong(ConstructionDTO::getId).max().orElse(0L) + 1;
+        construction.setId(newId);
+        getExtensionConstruction().add(construction);
+    }
+
+    // method to returning real extension
+    public static List<ConstructionDTO> getExtensionConstruction() {
+        return constructions;
     }
 
     /// =============== Contractors ================///
@@ -367,24 +431,36 @@ public class DataSupplier {
     }
 
     public static ContractorDTO getContractorById(Long id) {
-        Optional<ContractorDTO> contractor = contractors.stream().filter(t -> t.getId().equals(id)).findFirst();
+        Optional<ContractorDTO> contractor = getExtensionContractor().stream().filter(t -> t.getId().equals(id)).findFirst();
         return contractor.orElse(null);
     }
 
-    public static ContractorDTO updateContractorById(Long id, ContractorDTO updateCommand) {
+    public static void updateContractorById(Long id, ContractorDTO updateCommand) {
         ContractorDTO contractorToUpdate = getContractorById(id);
-        if (contractorToUpdate == null) return null;
-
+        if (contractorToUpdate == null) {
+            throw new ContractorNotFoundException();
+        }
         Optional.ofNullable(updateCommand.getCompanyName()).ifPresent(contractorToUpdate::setCompanyName);
         Optional.ofNullable(updateCommand.getConstruction()).ifPresent(contractorToUpdate::setConstruction);
         Optional.ofNullable(updateCommand.getContract()).ifPresent(contractorToUpdate::setContract);
-
-        return contractorToUpdate;
     }
 
     public static void deleteContractorById(Long id) {
         ContractorDTO contractor = getContractorById(id);
-        contractors.remove(contractor);
+        if (contractor == null){
+            throw new ContractorNotFoundException();
+        }
+        getExtensionContractor().remove(contractor);
+    }
+
+    public static void addContractor(ContractorDTO contractor) {
+        Long newId = getExtensionContractor().stream().mapToLong(ContractorDTO::getId).max().orElse(0L) + 1;
+        contractor.setId(newId);
+        getExtensionContractor().add(contractor);
+    }
+
+    public static List<ContractorDTO> getExtensionContractor(){
+        return contractors;
     }
 
     /// =============== Materials ================///
@@ -418,26 +494,38 @@ public class DataSupplier {
     }
 
     public static MaterialDTO getMaterialById(Long id) {
-        Optional<MaterialDTO> material = materials.stream().filter(t -> t.getId().equals(id)).findFirst();
+        Optional<MaterialDTO> material = getExtensionMaterial().stream().filter(t -> t.getId().equals(id)).findFirst();
         return material.orElse(null);
     }
 
-    public static MaterialDTO updateMaterialById(Long id, MaterialDTO updateCommand) {
+    public static void updateMaterialById(Long id, MaterialDTO updateCommand) {
         MaterialDTO materialToUpdate = getMaterialById(id);
-        if (materialToUpdate == null) return null;
+        if (materialToUpdate == null) {
+            throw new MaterialNotFoundException();
+        }
 
         Optional.ofNullable(updateCommand.getName()).ifPresent(materialToUpdate::setName);
         Optional.ofNullable(updateCommand.getDateOfConclusion()).ifPresent(materialToUpdate::setDateOfConclusion);
         Optional.ofNullable(updateCommand.getValue()).ifPresent(materialToUpdate::setValue);
         Optional.ofNullable(updateCommand.getMilestone()).ifPresent(materialToUpdate::setMilestone);
-
-        return materialToUpdate;
     }
 
-    public static boolean deleteMaterialById(Long id) {
+    public static void deleteMaterialById(Long id) {
         MaterialDTO material = getMaterialById(id);
-        if (material == null) return false;
-        return materials.remove(material);
+        if (material == null){
+            throw new MaterialNotFoundException();
+        }
+        getExtensionMaterial().remove(material);
+    }
+
+    public static void addMaterial(MaterialDTO material) {
+        Long newId = getExtensionMaterial().stream().mapToLong(MaterialDTO::getId).max().orElse(0L) + 1;
+        material.setId(newId);
+        getExtensionMaterial().add(material);
+    }
+
+    public static List<MaterialDTO> getExtensionMaterial(){
+        return materials;
     }
 
     /// =============== Elements ================///
@@ -479,27 +567,39 @@ public class DataSupplier {
     }
 
     public static ElementDTO getElementById(Long id) {
-        Optional<ElementDTO> element = elements.stream().filter(t -> t.getId().equals(id)).findFirst();
+        Optional<ElementDTO> element = getExtensionElement().stream().filter(t -> t.getId().equals(id)).findFirst();
         return element.orElse(null);
     }
 
-    public static ElementDTO updateElementById(Long id, ElementDTO updateCommand) {
+    public static void updateElementById(Long id, ElementDTO updateCommand) {
         ElementDTO elementToUpdate = getElementById(id);
-        if (elementToUpdate == null) return null;
-
+        if (elementToUpdate == null) {
+            throw new ElementNotFoundException();
+        }
         Optional.ofNullable(updateCommand.getName()).ifPresent(elementToUpdate::setName);
         Optional.ofNullable(updateCommand.getDescription()).ifPresent(elementToUpdate::setDescription);
         Optional.ofNullable(updateCommand.getStatus()).ifPresent(elementToUpdate::setStatus);
         Optional.ofNullable(updateCommand.getDateOfExecute()).ifPresent(elementToUpdate::setDateOfExecute);
         Optional.ofNullable(updateCommand.getDurationDay()).ifPresent(elementToUpdate::setDurationDay);
         Optional.ofNullable(updateCommand.getMilestone()).ifPresent(elementToUpdate::setMilestone);
-
-        return elementToUpdate;
     }
 
     public static void deleteElementById(Long id) {
         ElementDTO element = getElementById(id);
-        elements.remove(element);
+        if (element == null){
+            throw new ElementNotFoundException();
+        }
+        getExtensionElement().remove(element);
+    }
+
+    public static void addElement(ElementDTO element) {
+        Long newId = getExtensionElement().stream().mapToLong(ElementDTO::getId).max().orElse(0L) + 1;
+        element.setId(newId);
+        getExtensionElement().add(element);
+    }
+
+    public static List<ElementDTO> getExtensionElement(){
+        return elements;
     }
 
     /// =============== Documents ================///
@@ -529,27 +629,39 @@ public class DataSupplier {
     }
 
     public static DocumentDTO getDocumentById(Long id) {
-        Optional<DocumentDTO> document = documents.stream().filter(t -> t.getId().equals(id)).findFirst();
+        Optional<DocumentDTO> document = getExtensionDocument().stream().filter(t -> t.getId().equals(id)).findFirst();
         return document.orElse(null);
     }
 
-    public static DocumentDTO updateDocumentById(Long id, DocumentDTO updateCommand) {
+    public static void updateDocumentById(Long id, DocumentDTO updateCommand) {
         DocumentDTO documentToUpdate = getDocumentById(id);
-        if (documentToUpdate == null) return null;
-
+        if (documentToUpdate == null) {
+         throw new DocumentNotFoundException();
+        }
         Optional.ofNullable(updateCommand.getName()).ifPresent(documentToUpdate::setName);
         Optional.ofNullable(updateCommand.getType()).ifPresent(documentToUpdate::setType);
         Optional.ofNullable(updateCommand.getDateOfIssue()).ifPresent(documentToUpdate::setDateOfIssue);
         Optional.ofNullable(updateCommand.getSender()).ifPresent(documentToUpdate::setSender);
         Optional.ofNullable(updateCommand.getRecipients()).ifPresent(documentToUpdate::setRecipients);
         Optional.ofNullable(updateCommand.getMilestone()).ifPresent(documentToUpdate::setMilestone);
-
-        return documentToUpdate;
     }
 
     public static void deleteDocumentById(Long id) {
         DocumentDTO document = getDocumentById(id);
-        documents.remove(document);
+        if (document == null){
+            throw new DocumentNotFoundException();
+        }
+        getExtensionDocument().remove(document);
+    }
+
+    public static void addDocument(DocumentDTO document) {
+        Long newId = getExtensionDocument().stream().mapToLong(DocumentDTO::getId).max().orElse(0L) + 1;
+        document.setId(newId);
+        getExtensionDocument().add(document);
+    }
+
+    public static List<DocumentDTO> getExtensionDocument(){
+        return documents;
     }
 
     /// =============== Milestone ================///
@@ -583,14 +695,15 @@ public class DataSupplier {
     }
 
     public static MilestoneDTO getMilestoneById(Long id) {
-        Optional<MilestoneDTO> milestone = milestones.stream().filter(t -> t.getId().equals(id)).findFirst();
+        Optional<MilestoneDTO> milestone = getExtensionMilestone().stream().filter(t -> t.getId().equals(id)).findFirst();
         return milestone.orElse(null);
     }
 
-    public static MilestoneDTO updateMilestoneById(Long id, MilestoneDTO updateCommand) {
+    public static void updateMilestoneById(Long id, MilestoneDTO updateCommand) {
         MilestoneDTO milestoneToUpdate = getMilestoneById(id);
-        if (milestoneToUpdate == null) return null;
-
+        if (milestoneToUpdate == null) {
+            throw new MilestoneNotFoundException();
+        }
         Optional.ofNullable(updateCommand.getName()).ifPresent(milestoneToUpdate::setName);
         Optional.ofNullable(updateCommand.getExecutor()).ifPresent(milestoneToUpdate::setExecutor);
         Optional.ofNullable(updateCommand.getStatus()).ifPresent(milestoneToUpdate::setStatus);
@@ -598,14 +711,24 @@ public class DataSupplier {
         Optional.ofNullable(updateCommand.getDocuments()).ifPresent(milestoneToUpdate::setDocuments);
         Optional.ofNullable(updateCommand.getMaterial()).ifPresent(milestoneToUpdate::setMaterial);
         Optional.ofNullable(updateCommand.getElements()).ifPresent(milestoneToUpdate::setElements);
-
-        return milestoneToUpdate;
     }
 
     public static void deleteMilestoneById(Long id) {
         MilestoneDTO milestone = getMilestoneById(id);
-        milestones.remove(milestone);
+        if (milestone == null){
+            throw new MilestoneNotFoundException();
+        }
+        getExtensionMilestone().remove(milestone);
     }
 
+    public static void addMilestone(MilestoneDTO milestone) {
+        Long newId = getExtensionMilestone().stream().mapToLong(MilestoneDTO::getId).max().orElse(0L) + 1;
+        milestone.setId(newId);
+        getExtensionMilestone().add(milestone);
+    }
+
+    public static List<MilestoneDTO> getExtensionMilestone(){
+        return milestones;
+    }
 
 }

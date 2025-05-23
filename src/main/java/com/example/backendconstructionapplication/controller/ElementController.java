@@ -30,7 +30,7 @@ public class ElementController {
             content = @Content(mediaType = "application/json"))
     @GetMapping("/elements")
     public ResponseEntity<List<ElementDTO>> getAllElements(){
-        return new ResponseEntity<>(DataSupplier.getElements(), HttpStatus.OK);
+        return new ResponseEntity<>(DataSupplier.getExtensionElement(), HttpStatus.OK);
     }
 
     @Operation(summary = "Get element by id", description = "Retrieve a construction element by its ID")
@@ -83,9 +83,23 @@ public class ElementController {
             content = @Content(mediaType = "application/json"))
     @PutMapping("/elements/{id}")
     public ResponseEntity<ElementDTO> updateElement(@PathVariable Long id, @RequestBody ElementDTO dto) {
-        ElementDTO updated = DataSupplier.updateElementById(id, dto);
-        return new ResponseEntity<>(updated, HttpStatus.OK);
+        DataSupplier.updateElementById(id, dto);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    @Operation(summary = "Add new element", description = "Add a new cost estimate element")
+    @ApiResponse(responseCode = "201", description = "Element successfully added",
+            content = @Content(mediaType = "application/json"))
+    @ApiResponse(responseCode = "400", description = "Bad request, invalid input",
+            content = @Content(mediaType = "application/json"))
+    @ApiResponse(responseCode = "403", description = "Forbidden, access denied",
+            content = @Content(mediaType = "application/json"))
+    @ApiResponse(responseCode = "500", description = "Internal server error, please try again later",
+            content = @Content(mediaType = "application/json"))
+    @PostMapping("/elements")
+    public ResponseEntity<ElementDTO> addElement(@RequestBody ElementDTO element) {
+        DataSupplier.addElement(element);
+        return new ResponseEntity<>(element, HttpStatus.CREATED);
+    }
 
 }

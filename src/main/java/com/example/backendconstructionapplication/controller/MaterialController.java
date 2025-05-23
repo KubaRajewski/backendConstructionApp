@@ -31,7 +31,7 @@ public class MaterialController {
             content = @Content(mediaType = "application/json"))
     @GetMapping("/materials")
     public ResponseEntity<List<MaterialDTO>> getAllMaterials(){
-        return new ResponseEntity<>(DataSupplier.getMaterials(), HttpStatus.OK);
+        return new ResponseEntity<>(DataSupplier.getExtensionMaterial(), HttpStatus.OK);
     }
 
     @Operation(summary = "Get material by id", description = "Retrieve a construction material by its ID")
@@ -84,8 +84,23 @@ public class MaterialController {
             content = @Content(mediaType = "application/json"))
     @PutMapping("/materials/{id}")
     public ResponseEntity<MaterialDTO> updateMaterial(@PathVariable Long id, @RequestBody MaterialDTO dto) {
-        MaterialDTO updated = DataSupplier.updateMaterialById(id, dto);
-        return new ResponseEntity<>(updated, HttpStatus.OK);
+        DataSupplier.updateMaterialById(id, dto);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @Operation(summary = "Add new material", description = "Add a new building material to the system")
+    @ApiResponse(responseCode = "201", description = "Material successfully added",
+            content = @Content(mediaType = "application/json"))
+    @ApiResponse(responseCode = "400", description = "Bad request, invalid input",
+            content = @Content(mediaType = "application/json"))
+    @ApiResponse(responseCode = "403", description = "Forbidden, access denied",
+            content = @Content(mediaType = "application/json"))
+    @ApiResponse(responseCode = "500", description = "Internal server error, please try again later",
+            content = @Content(mediaType = "application/json"))
+    @PostMapping("/materials")
+    public ResponseEntity<MaterialDTO> addMaterial(@RequestBody MaterialDTO material) {
+        DataSupplier.addMaterial(material);
+        return new ResponseEntity<>(material, HttpStatus.CREATED);
     }
 
 }

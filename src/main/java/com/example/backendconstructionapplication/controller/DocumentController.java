@@ -33,7 +33,7 @@ public class DocumentController {
             content = @Content(mediaType = "application/json"))
     @GetMapping("/documents")
     public ResponseEntity<List<DocumentDTO>> getAllDocuments(){
-        return new ResponseEntity<>(DataSupplier.getDocuments(), HttpStatus.OK);
+        return new ResponseEntity<>(DataSupplier.getExtensionDocument(), HttpStatus.OK);
     }
 
     @Operation(summary = "Get documents by id", description = "Retrieve a document by its ID")
@@ -86,8 +86,23 @@ public class DocumentController {
             content = @Content(mediaType = "application/json"))
     @PutMapping("/documents/{id}")
     public ResponseEntity<DocumentDTO> updateDocument(@PathVariable Long id, @RequestBody DocumentDTO dto) {
-        DocumentDTO updated = DataSupplier.updateDocumentById(id, dto);
-        return new ResponseEntity<>(updated, HttpStatus.OK);
+        DataSupplier.updateDocumentById(id, dto);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @Operation(summary = "Add new document", description = "Add a new document to the system")
+    @ApiResponse(responseCode = "201", description = "Document successfully added",
+            content = @Content(mediaType = "application/json"))
+    @ApiResponse(responseCode = "400", description = "Bad request, invalid input",
+            content = @Content(mediaType = "application/json"))
+    @ApiResponse(responseCode = "403", description = "Forbidden, access denied",
+            content = @Content(mediaType = "application/json"))
+    @ApiResponse(responseCode = "500", description = "Internal server error, please try again later",
+            content = @Content(mediaType = "application/json"))
+    @PostMapping("/documents")
+    public ResponseEntity<DocumentDTO> addDocument(@RequestBody DocumentDTO document) {
+        DataSupplier.addDocument(document);
+        return new ResponseEntity<>(document, HttpStatus.CREATED);
     }
 
 }

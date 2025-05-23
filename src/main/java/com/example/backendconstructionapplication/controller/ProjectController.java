@@ -30,7 +30,7 @@ public class ProjectController {
             content = @Content(mediaType = "application/json"))
     @GetMapping("/projects")
     public ResponseEntity<List<ProjectDTO>> getAllProjects() {
-        return new ResponseEntity<>(DataSupplier.getProjects(), HttpStatus.OK);
+        return new ResponseEntity<>(DataSupplier.getExtensionProject(), HttpStatus.OK);
     }
 
     @Operation(summary = "Get project by ID", description = "Retrieve a construction project by its ID")
@@ -83,8 +83,22 @@ public class ProjectController {
             content = @Content(mediaType = "application/json"))
     @PutMapping("/projects/{id}")
     public ResponseEntity<ProjectDTO> updateProject(@PathVariable Long id, @RequestBody ProjectDTO dto) {
-        ProjectDTO updated = DataSupplier.updateProjectById(id, dto);
-        return new ResponseEntity<>(updated, HttpStatus.OK);
+        DataSupplier.updateProjectById(id, dto);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    @Operation(summary = "Add new project", description = "Add a new construction project to the system")
+    @ApiResponse(responseCode = "201", description = "Project successfully added",
+            content = @Content(mediaType = "application/json"))
+    @ApiResponse(responseCode = "400", description = "Bad request, invalid input",
+            content = @Content(mediaType = "application/json"))
+    @ApiResponse(responseCode = "403", description = "Forbidden, access denied",
+            content = @Content(mediaType = "application/json"))
+    @ApiResponse(responseCode = "500", description = "Internal server error, please try again later",
+            content = @Content(mediaType = "application/json"))
+    @PostMapping("/projects")
+    public ResponseEntity<ProjectDTO> addProject(@RequestBody ProjectDTO project) {
+        DataSupplier.addProject(project);
+        return new ResponseEntity<>(project, HttpStatus.CREATED);
+    }
 }

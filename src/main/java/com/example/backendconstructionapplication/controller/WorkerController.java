@@ -30,7 +30,7 @@ public class WorkerController {
             content = @Content(mediaType = "application/json"))
     @GetMapping("/workers")
     public ResponseEntity<List<WorkerDTO>> getAllWorkers(){
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(DataSupplier.getExtensionWorker(), HttpStatus.OK);
     }
 
     @Operation(summary = "Get workers by id", description = "Retrieve a construction worker by its ID")
@@ -83,8 +83,22 @@ public class WorkerController {
             content = @Content(mediaType = "application/json"))
     @PutMapping("/workers/{id}")
     public ResponseEntity<WorkerDTO> updateWorker(@PathVariable Long id, @RequestBody WorkerDTO dto) {
-        WorkerDTO updated = DataSupplier.updateWorkerById(id, dto);
-        return new ResponseEntity<>(updated, HttpStatus.OK);
+        DataSupplier.updateWorkerById(id, dto);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    @Operation(summary = "Add new worker", description = "Add a new construction worker")
+    @ApiResponse(responseCode = "201", description = "Worker successfully added",
+            content = @Content(mediaType = "application/json"))
+    @ApiResponse(responseCode = "400", description = "Bad request, invalid input",
+            content = @Content(mediaType = "application/json"))
+    @ApiResponse(responseCode = "403", description = "Forbidden, access denied",
+            content = @Content(mediaType = "application/json"))
+    @ApiResponse(responseCode = "500", description = "Internal server error, please try again later",
+            content = @Content(mediaType = "application/json"))
+    @PostMapping("/workers")
+    public ResponseEntity<WorkerDTO> addWorker(@RequestBody WorkerDTO worker) {
+        DataSupplier.addWorker(worker);
+        return new ResponseEntity<>(worker, HttpStatus.CREATED);
+    }
 }

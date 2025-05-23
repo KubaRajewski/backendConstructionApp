@@ -30,7 +30,7 @@ public class MilestoneController {
             content = @Content(mediaType = "application/json"))
     @GetMapping("/milestones")
     public ResponseEntity<List<MilestoneDTO>> getAllMilestones(){
-        return new ResponseEntity<>(DataSupplier.getMilestone(), HttpStatus.OK);
+        return new ResponseEntity<>(DataSupplier.getExtensionMilestone(), HttpStatus.OK);
     }
 
     @Operation(summary = "Get all milestone by id", description = "Retrieve a construction milestone by its ID")
@@ -83,9 +83,23 @@ public class MilestoneController {
             content = @Content(mediaType = "application/json"))
     @PutMapping("/milestones/{id}")
     public ResponseEntity<MilestoneDTO> updateMilestone(@PathVariable Long id, @RequestBody MilestoneDTO dto) {
-        MilestoneDTO updated = DataSupplier.updateMilestoneById(id, dto);
-        return new ResponseEntity<>(updated, HttpStatus.OK);
+        DataSupplier.updateMilestoneById(id, dto);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    @Operation(summary = "Add new milestone", description = "Add a new milestone to a construction project")
+    @ApiResponse(responseCode = "201", description = "Milestone successfully added",
+            content = @Content(mediaType = "application/json"))
+    @ApiResponse(responseCode = "400", description = "Bad request, invalid input",
+            content = @Content(mediaType = "application/json"))
+    @ApiResponse(responseCode = "403", description = "Forbidden, access denied",
+            content = @Content(mediaType = "application/json"))
+    @ApiResponse(responseCode = "500", description = "Internal server error, please try again later",
+            content = @Content(mediaType = "application/json"))
+    @PostMapping("/milestones")
+    public ResponseEntity<MilestoneDTO> addMilestone(@RequestBody MilestoneDTO milestone) {
+        DataSupplier.addMilestone(milestone);
+        return new ResponseEntity<>(milestone, HttpStatus.CREATED);
+    }
 
 }

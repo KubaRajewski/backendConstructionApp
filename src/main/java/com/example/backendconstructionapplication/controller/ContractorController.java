@@ -30,7 +30,7 @@ public class ContractorController {
             content = @Content(mediaType = "application/json"))
     @GetMapping("/contractors")
     public ResponseEntity<List<ContractorDTO>> getAllContractors(){
-        return new ResponseEntity<>(DataSupplier.getContractors(), HttpStatus.OK);
+        return new ResponseEntity<>(DataSupplier.getExtensionContractor(), HttpStatus.OK);
     }
 
     @Operation(summary = "Get contractor by id", description = "Retrieve construction by id")
@@ -83,8 +83,23 @@ public class ContractorController {
             content = @Content(mediaType = "application/json"))
     @PutMapping("/contractors/{id}")
     public ResponseEntity<ContractorDTO> updateConstruction(@PathVariable Long id, @RequestBody ContractorDTO dto) {
-        ContractorDTO updated = DataSupplier.updateContractorById(id, dto);
-        return new ResponseEntity<>(updated, HttpStatus.OK);
+        DataSupplier.updateContractorById(id, dto);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @Operation(summary = "Add new contractor", description = "Add a new contractor assigned to a construction")
+    @ApiResponse(responseCode = "201", description = "Contractor successfully added",
+            content = @Content(mediaType = "application/json"))
+    @ApiResponse(responseCode = "400", description = "Bad request, invalid input",
+            content = @Content(mediaType = "application/json"))
+    @ApiResponse(responseCode = "403", description = "Forbidden, access denied",
+            content = @Content(mediaType = "application/json"))
+    @ApiResponse(responseCode = "500", description = "Internal server error, please try again later",
+            content = @Content(mediaType = "application/json"))
+    @PostMapping("/contractors")
+    public ResponseEntity<ContractorDTO> addContractor(@RequestBody ContractorDTO contractor) {
+        DataSupplier.addContractor(contractor);
+        return new ResponseEntity<>(contractor, HttpStatus.CREATED);
     }
 
 }

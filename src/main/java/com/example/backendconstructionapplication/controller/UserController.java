@@ -31,7 +31,7 @@ public class UserController {
             content = @Content(mediaType = "application/json"))
     @GetMapping("/users")
     public ResponseEntity<List<UserDTO>> getAllUsers(){
-        return new ResponseEntity<>(DataSupplier.getUsers(), HttpStatus.OK);
+        return new ResponseEntity<>(DataSupplier.getExtensionUser(), HttpStatus.OK);
     }
 
     @Operation(summary = "Get user by id", description = "Retrieve a construction user by its ID")
@@ -84,8 +84,23 @@ public class UserController {
             content = @Content(mediaType = "application/json"))
     @PutMapping("/users/{id}")
     public ResponseEntity<UserDTO> updateUser(@PathVariable Long id, @RequestBody UserDTO dto) {
-        UserDTO updated = DataSupplier.updateUserById(id, dto);
-        return new ResponseEntity<>(updated, HttpStatus.OK);
+        DataSupplier.updateUserById(id, dto);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @Operation(summary = "Add new user", description = "Add a new system user")
+    @ApiResponse(responseCode = "201", description = "User successfully added",
+            content = @Content(mediaType = "application/json"))
+    @ApiResponse(responseCode = "400", description = "Bad request, invalid input",
+            content = @Content(mediaType = "application/json"))
+    @ApiResponse(responseCode = "403", description = "Forbidden, access denied",
+            content = @Content(mediaType = "application/json"))
+    @ApiResponse(responseCode = "500", description = "Internal server error, please try again later",
+            content = @Content(mediaType = "application/json"))
+    @PostMapping("/users")
+    public ResponseEntity<UserDTO> addUser(@RequestBody UserDTO user) {
+        DataSupplier.addUser(user);
+        return new ResponseEntity<>(user, HttpStatus.CREATED);
     }
 
 }

@@ -30,7 +30,7 @@ public class ConstructionController {
             content = @Content(mediaType = "application/json"))
     @GetMapping("/constructions")
     public ResponseEntity<List<ConstructionDTO>> getAllConstruction() {
-        return new ResponseEntity<>(DataSupplier.getConstruction(), HttpStatus.OK);
+        return new ResponseEntity<>(DataSupplier.getExtensionConstruction(), HttpStatus.OK);
     }
 
     @Operation(summary = "Get construction by id", description = "Retrieve a construction by its ID")
@@ -83,8 +83,23 @@ public class ConstructionController {
             content = @Content(mediaType = "application/json"))
     @PutMapping("/constructions/{id}")
     public ResponseEntity<ConstructionDTO> updateConstruction(@PathVariable Long id, @RequestBody ConstructionDTO dto) {
-        ConstructionDTO updated = DataSupplier.updateConstructionById(id, dto);
-        return new ResponseEntity<>(updated, HttpStatus.OK);
+        DataSupplier.updateConstructionById(id, dto);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @Operation(summary = "Add new construction", description = "Add a new construction site to the system")
+    @ApiResponse(responseCode = "201", description = "Construction successfully added",
+            content = @Content(mediaType = "application/json"))
+    @ApiResponse(responseCode = "400", description = "Bad request, invalid input",
+            content = @Content(mediaType = "application/json"))
+    @ApiResponse(responseCode = "403", description = "Forbidden, access denied",
+            content = @Content(mediaType = "application/json"))
+    @ApiResponse(responseCode = "500", description = "Internal server error, please try again later",
+            content = @Content(mediaType = "application/json"))
+    @PostMapping("/constructions")
+    public ResponseEntity<ConstructionDTO> addConstruction(@RequestBody ConstructionDTO construction) {
+        DataSupplier.addConstruction(construction);
+        return new ResponseEntity<>(construction, HttpStatus.CREATED);
     }
 
 }
