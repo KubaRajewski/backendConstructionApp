@@ -1,7 +1,7 @@
 package com.example.backendconstructionapplication.controller;
 
 import com.example.backendconstructionapplication.data.supplier.DataSupplier;
-import com.example.backendconstructionapplication.dto.ProjectDTO;
+import com.example.backendconstructionapplication.dto.ConstructionDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -12,83 +12,83 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RequestMapping("/api/v1/project")
+@RequestMapping("/api/v1/construction")
 @RestController
 @RequiredArgsConstructor
-public class ProjectController {
+public class ConstructionController {
 
-    @Operation(summary = "Get all projects", description = "Retrieve all active construction projects")
-    @ApiResponse(responseCode = "200", description = "Successful retrieval of all projects",
+    @Operation(summary = "Get all constructions", description = "Retrieve all active constructions")
+    @ApiResponse(responseCode = "200", description = "Successful retrieval of all constructions",
             content = @Content(mediaType = "application/json"))
     @ApiResponse(responseCode = "400", description = "Bad request, invalid input",
             content = @Content(mediaType = "application/json"))
     @ApiResponse(responseCode = "403", description = "Forbidden, access denied",
             content = @Content(mediaType = "application/json"))
-    @ApiResponse(responseCode = "404", description = "No projects found",
+    @ApiResponse(responseCode = "404", description = "No constructions found",
             content = @Content(mediaType = "application/json"))
     @ApiResponse(responseCode = "500", description = "Internal server error, please try again later",
             content = @Content(mediaType = "application/json"))
-    @GetMapping("/projects")
-    public ResponseEntity<List<ProjectDTO>> getAllProjects() {
-        return new ResponseEntity<>(DataSupplier.getExtensionProject(), HttpStatus.OK);
+    @GetMapping("/constructions")
+    public ResponseEntity<List<ConstructionDTO>> getAllConstruction() {
+        return new ResponseEntity<>(DataSupplier.getExtensionConstruction(), HttpStatus.OK);
     }
 
-    @Operation(summary = "Get project by ID", description = "Retrieve a construction project by its ID")
-    @ApiResponse(responseCode = "200", description = "Successful retrieval of the project",
+    @Operation(summary = "Get construction by id", description = "Retrieve a construction by its ID")
+    @ApiResponse(responseCode = "200", description = "Successful retrieval of thr construction",
             content = @Content(mediaType = "application/json"))
     @ApiResponse(responseCode = "400", description = "Bad request, invalid input",
             content = @Content(mediaType = "application/json"))
-    @ApiResponse(responseCode = "404", description = "Project not found",
-            content = @Content(mediaType = "application/json"))
     @ApiResponse(responseCode = "403", description = "Forbidden, access denied",
+            content = @Content(mediaType = "application/json"))
+    @ApiResponse(responseCode = "404", description = "Construction not found",
             content = @Content(mediaType = "application/json"))
     @ApiResponse(responseCode = "500", description = "Internal server error, please try again later",
             content = @Content(mediaType = "application/json"))
-    @GetMapping("/projects/{id}")
-    public ResponseEntity<ProjectDTO> getProjectById(@PathVariable Long id) {
-        ProjectDTO project = DataSupplier.getProjectById(id);
-        if (project == null) {
+    @GetMapping("/constructions/{id}")
+    public ResponseEntity<ConstructionDTO> getConstructionById(@PathVariable Long id) {
+        ConstructionDTO construction = DataSupplier.getConstructionById(id);
+        if (construction == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        return new ResponseEntity<>(project, HttpStatus.OK);
+        return new ResponseEntity<>(construction, HttpStatus.OK);
     }
 
-    @Operation(summary = "Delete project", description = "Delete a project by ID")
-    @ApiResponse(responseCode = "200", description = "Successful deleting of the project",
+    @Operation(summary = "Delete construction", description = "Delete a construction by ID")
+    @ApiResponse(responseCode = "200", description = "Successful deleting of the construction",
             content = @Content(mediaType = "application/json"))
     @ApiResponse(responseCode = "400", description = "Bad request, invalid input",
             content = @Content(mediaType = "application/json"))
-    @ApiResponse(responseCode = "404", description = "Project not found",
+    @ApiResponse(responseCode = "404", description = "construction not found",
             content = @Content(mediaType = "application/json"))
     @ApiResponse(responseCode = "403", description = "Forbidden, access denied",
             content = @Content(mediaType = "application/json"))
     @ApiResponse(responseCode = "500", description = "Internal server error, please try again later",
             content = @Content(mediaType = "application/json"))
-    @DeleteMapping("/projects/{id}")
-    public HttpStatus deleteProject(@PathVariable Long id) {
-        DataSupplier.deleteProjectById(id);
+    @DeleteMapping("/constructions/{id}")
+    public HttpStatus deleteConstruction(@PathVariable Long id) {
+        DataSupplier.deleteConstructionById(id);
         return HttpStatus.OK;
     }
 
-    @Operation(summary = "Update project", description = "Update a project by ID")
-    @ApiResponse(responseCode = "200", description = "Successful editing of the project",
+    @Operation(summary = "Update construction", description = "Update a construction by ID")
+    @ApiResponse(responseCode = "200", description = "Successful editing of the construction",
             content = @Content(mediaType = "application/json"))
     @ApiResponse(responseCode = "400", description = "Bad request, invalid input",
             content = @Content(mediaType = "application/json"))
-    @ApiResponse(responseCode = "404", description = "Project not found",
+    @ApiResponse(responseCode = "404", description = "Construction not found",
             content = @Content(mediaType = "application/json"))
     @ApiResponse(responseCode = "403", description = "Forbidden, access denied",
             content = @Content(mediaType = "application/json"))
     @ApiResponse(responseCode = "500", description = "Internal server error, please try again later",
             content = @Content(mediaType = "application/json"))
-    @PutMapping("/projects/{id}")
-    public ResponseEntity<ProjectDTO> updateProject(@PathVariable Long id, @RequestBody ProjectDTO dto) {
-        DataSupplier.updateProjectById(id, dto);
+    @PutMapping("/constructions/{id}")
+    public ResponseEntity<ConstructionDTO> updateConstruction(@PathVariable Long id, @RequestBody ConstructionDTO dto) {
+        DataSupplier.updateConstructionById(id, dto);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @Operation(summary = "Add new project", description = "Add a new construction project to the system")
-    @ApiResponse(responseCode = "201", description = "Project successfully added",
+    @Operation(summary = "Add new construction", description = "Add a new construction site to the system")
+    @ApiResponse(responseCode = "201", description = "Construction successfully added",
             content = @Content(mediaType = "application/json"))
     @ApiResponse(responseCode = "400", description = "Bad request, invalid input",
             content = @Content(mediaType = "application/json"))
@@ -96,9 +96,10 @@ public class ProjectController {
             content = @Content(mediaType = "application/json"))
     @ApiResponse(responseCode = "500", description = "Internal server error, please try again later",
             content = @Content(mediaType = "application/json"))
-    @PostMapping("/projects")
-    public ResponseEntity<ProjectDTO> addProject(@RequestBody ProjectDTO project) {
-        DataSupplier.addProject(project);
-        return new ResponseEntity<>(project, HttpStatus.CREATED);
+    @PostMapping("/constructions")
+    public ResponseEntity<ConstructionDTO> addConstruction(@RequestBody ConstructionDTO construction) {
+        DataSupplier.addConstruction(construction);
+        return new ResponseEntity<>(construction, HttpStatus.CREATED);
     }
+
 }

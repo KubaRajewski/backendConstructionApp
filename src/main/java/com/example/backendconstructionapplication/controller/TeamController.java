@@ -2,6 +2,7 @@ package com.example.backendconstructionapplication.controller;
 
 import com.example.backendconstructionapplication.data.supplier.DataSupplier;
 import com.example.backendconstructionapplication.dto.ProjectDTO;
+import com.example.backendconstructionapplication.dto.TeamDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -12,83 +13,83 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RequestMapping("/api/v1/project")
+@RequestMapping("/api/v1/team")
 @RestController
 @RequiredArgsConstructor
-public class ProjectController {
+public class TeamController {
 
-    @Operation(summary = "Get all projects", description = "Retrieve all active construction projects")
-    @ApiResponse(responseCode = "200", description = "Successful retrieval of all projects",
+    @Operation(summary = "Get all team", description = "Retrieve all active construction team")
+    @ApiResponse(responseCode = "200", description = "Successful retrieval of all teams",
             content = @Content(mediaType = "application/json"))
     @ApiResponse(responseCode = "400", description = "Bad request, invalid input",
             content = @Content(mediaType = "application/json"))
     @ApiResponse(responseCode = "403", description = "Forbidden, access denied",
             content = @Content(mediaType = "application/json"))
-    @ApiResponse(responseCode = "404", description = "No projects found",
+    @ApiResponse(responseCode = "404", description = "No teams found",
             content = @Content(mediaType = "application/json"))
     @ApiResponse(responseCode = "500", description = "Internal server error, please try again later",
             content = @Content(mediaType = "application/json"))
-    @GetMapping("/projects")
-    public ResponseEntity<List<ProjectDTO>> getAllProjects() {
-        return new ResponseEntity<>(DataSupplier.getExtensionProject(), HttpStatus.OK);
+    @GetMapping("/teams")
+    public ResponseEntity<List<TeamDTO>> getAllTeams() {
+        return new ResponseEntity<>(DataSupplier.getExtensionTeam(), HttpStatus.OK);
     }
 
-    @Operation(summary = "Get project by ID", description = "Retrieve a construction project by its ID")
-    @ApiResponse(responseCode = "200", description = "Successful retrieval of the project",
+    @Operation(summary = "Get team by ID", description = "Retrieve a construction team by its ID")
+    @ApiResponse(responseCode = "200", description = "Successful retrieval of the team",
             content = @Content(mediaType = "application/json"))
     @ApiResponse(responseCode = "400", description = "Bad request, invalid input",
             content = @Content(mediaType = "application/json"))
-    @ApiResponse(responseCode = "404", description = "Project not found",
+    @ApiResponse(responseCode = "404", description = "Team not found",
             content = @Content(mediaType = "application/json"))
     @ApiResponse(responseCode = "403", description = "Forbidden, access denied",
             content = @Content(mediaType = "application/json"))
     @ApiResponse(responseCode = "500", description = "Internal server error, please try again later",
             content = @Content(mediaType = "application/json"))
-    @GetMapping("/projects/{id}")
-    public ResponseEntity<ProjectDTO> getProjectById(@PathVariable Long id) {
-        ProjectDTO project = DataSupplier.getProjectById(id);
-        if (project == null) {
+    @GetMapping("/teams/{id}")
+    public ResponseEntity<TeamDTO> getTeamById(@PathVariable Long id) {
+        TeamDTO team = DataSupplier.getTeamById(id);
+        if (team == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        return new ResponseEntity<>(project, HttpStatus.OK);
+        return new ResponseEntity<>(team, HttpStatus.OK);
     }
 
-    @Operation(summary = "Delete project", description = "Delete a project by ID")
-    @ApiResponse(responseCode = "200", description = "Successful deleting of the project",
+    @Operation(summary = "Delete team", description = "Delete a team by ID")
+    @ApiResponse(responseCode = "200", description = "Successful deleting of the team",
             content = @Content(mediaType = "application/json"))
     @ApiResponse(responseCode = "400", description = "Bad request, invalid input",
             content = @Content(mediaType = "application/json"))
-    @ApiResponse(responseCode = "404", description = "Project not found",
+    @ApiResponse(responseCode = "404", description = "Team not found",
             content = @Content(mediaType = "application/json"))
     @ApiResponse(responseCode = "403", description = "Forbidden, access denied",
             content = @Content(mediaType = "application/json"))
     @ApiResponse(responseCode = "500", description = "Internal server error, please try again later",
             content = @Content(mediaType = "application/json"))
-    @DeleteMapping("/projects/{id}")
-    public HttpStatus deleteProject(@PathVariable Long id) {
-        DataSupplier.deleteProjectById(id);
+    @DeleteMapping("/teams/{id}")
+    public HttpStatus deleteTeam(@PathVariable Long id) {
+        DataSupplier.deleteTeamById(id);
         return HttpStatus.OK;
     }
 
-    @Operation(summary = "Update project", description = "Update a project by ID")
-    @ApiResponse(responseCode = "200", description = "Successful editing of the project",
+    @Operation(summary = "Updating team", description = "Update a team by ID")
+    @ApiResponse(responseCode = "200", description = "Successful editing of the team",
             content = @Content(mediaType = "application/json"))
     @ApiResponse(responseCode = "400", description = "Bad request, invalid input",
             content = @Content(mediaType = "application/json"))
-    @ApiResponse(responseCode = "404", description = "Project not found",
+    @ApiResponse(responseCode = "404", description = "Team not found",
             content = @Content(mediaType = "application/json"))
     @ApiResponse(responseCode = "403", description = "Forbidden, access denied",
             content = @Content(mediaType = "application/json"))
     @ApiResponse(responseCode = "500", description = "Internal server error, please try again later",
             content = @Content(mediaType = "application/json"))
-    @PutMapping("/projects/{id}")
-    public ResponseEntity<ProjectDTO> updateProject(@PathVariable Long id, @RequestBody ProjectDTO dto) {
-        DataSupplier.updateProjectById(id, dto);
+    @PutMapping("/teams/{id}")
+    public ResponseEntity<TeamDTO> updateTeam(@PathVariable Long id, @RequestBody TeamDTO dto) {
+        DataSupplier.updateTeamById(id, dto);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @Operation(summary = "Add new project", description = "Add a new construction project to the system")
-    @ApiResponse(responseCode = "201", description = "Project successfully added",
+    @Operation(summary = "Add new team", description = "Add a new construction team to the system")
+    @ApiResponse(responseCode = "201", description = "Team successfully added",
             content = @Content(mediaType = "application/json"))
     @ApiResponse(responseCode = "400", description = "Bad request, invalid input",
             content = @Content(mediaType = "application/json"))
@@ -96,9 +97,11 @@ public class ProjectController {
             content = @Content(mediaType = "application/json"))
     @ApiResponse(responseCode = "500", description = "Internal server error, please try again later",
             content = @Content(mediaType = "application/json"))
-    @PostMapping("/projects")
-    public ResponseEntity<ProjectDTO> addProject(@RequestBody ProjectDTO project) {
-        DataSupplier.addProject(project);
-        return new ResponseEntity<>(project, HttpStatus.CREATED);
+    @PostMapping("/teams")
+    public ResponseEntity<TeamDTO> addTeam(@RequestBody TeamDTO team) {
+        DataSupplier.addTeam(team);
+        return new ResponseEntity<>(team, HttpStatus.CREATED);
     }
+
+
 }
